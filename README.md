@@ -1,6 +1,9 @@
 Last.fm Profile visualizer Chrome Extension
 ===========================================
 
+About :
+-------
+
 A chrome extension that is injected into a last.fm profile page to compare the active user with the current user based on the listening history and artists in their respective profile.
 
 The application retrieves the Last.fm user that active user is visiting (last.fm/user/*). Then it gets the top artists for that user and the top artists for the active user and visualizes similarities in these profiles.
@@ -10,6 +13,13 @@ The Last.fm API can be found at http://www.last.fm/api . The JavaScript library 
 A chord diagram is created based on a matrix: for each row corresponding to an artist, a link is established using the value of each column corresponding to the other artists. The source code for this visualization is based on a a JavaScript script by Michael Bostock (http://d3js.org/ and https://github.com/mbostock/d3), which can be found at http://bl.ocks.org/4062006 . For more info on chord diagrams: http://circos.ca/ .
 
 This application is written by Joris Schelfaut. For more information consult http://soundsuggest.wordpress.com/ .
+
+Download :
+----------
+
+The resulting Chrome Extension application can be found here :
+https://chrome.google.com/webstore/detail/lastfm-profile-visualizer/oolohiafdhdhbaaemoccapejdjiplnae
+
 
 Useful links :
 --------------
