@@ -1,7 +1,9 @@
 var lastfm = {
+
     api : {
+
         chrome : {
-            
+
             album : {
                 addTags : function(params, session, callback) {
                     chrome.extension.sendMessage({
@@ -70,7 +72,7 @@ var lastfm = {
                     callback);
                 }
             },
-            
+
             artist : {
                 addTags : function(params, session, callback) {
                     chrome.extension.sendMessage({
@@ -195,7 +197,7 @@ var lastfm = {
                     callback);
                 }
             },
-            
+
             auth : {
                 getMobileSession : function(params, callback) {
                     chrome.extension.sendMessage({
@@ -219,7 +221,7 @@ var lastfm = {
                     callback);
                 }
             },
-            
+
             chart : {
                 getHypedArtists : function(params, callback) {
                     chrome.extension.sendMessage({
@@ -264,7 +266,7 @@ var lastfm = {
                     callback);
                 }
             },
-            
+
             event : {
                 attend : function(params, session, callback) {
                     chrome.extension.sendMessage({
@@ -312,7 +314,7 @@ var lastfm = {
                     callback);
                 }
             },
-            
+
             geo : {
                 getEvents : function(params, callback) {
                     chrome.extension.sendMessage({
@@ -392,7 +394,7 @@ var lastfm = {
                     callback);
                 }
             },
-            
+
             group : {
                 getHype : function(params, callback) {
                     chrome.extension.sendMessage({
@@ -437,7 +439,7 @@ var lastfm = {
                     callback);
                 }
             },
-            
+
             library : {
                 addAlbum : function(params, session, callback) {
                     chrome.extension.sendMessage({
@@ -517,7 +519,7 @@ var lastfm = {
                     callback);
                 }
             },
-            
+
             playlist : {
                 addTrack : function(params, session, callback) {
                     chrome.extension.sendMessage({
@@ -536,7 +538,7 @@ var lastfm = {
                     callback);
                 }
             },
-            
+
             radio : {
                 getPlaylist : function(params, callback) {
                     chrome.extension.sendMessage({
@@ -561,7 +563,7 @@ var lastfm = {
                     callback);
                 }
             },
-            
+
             tag : {
                 getInfo : function(params, callback) {
                     chrome.extension.sendMessage({
@@ -627,7 +629,7 @@ var lastfm = {
                     callback);
                 }
             },
-            
+
             tasteometer : {
                 compare : function(params, callback) {
                     chrome.extension.sendMessage({
@@ -644,7 +646,7 @@ var lastfm = {
                     callback);
                 }
             },
-            
+
             track : {
                 addTags : function(params, session, callback) {
                     chrome.extension.sendMessage({
@@ -789,7 +791,7 @@ var lastfm = {
                     callback);
                 }
             },
-            
+
             user : {
                 getArtistTracks : function(params, callback) {
                     chrome.extension.sendMessage({
@@ -970,7 +972,7 @@ var lastfm = {
                     callback);
                 }
             },
-            
+
             venue : {
                 getEvents : function(params, callback) {
                     chrome.extension.sendMessage({

@@ -62,11 +62,11 @@ function checkForValidUrl(tabId, changeInfo, tab) {
  * @returns {undefined}
  */
 function loadTopArtists(request, sender, sendResponse) {
-    if (request.action == 'user.gettopartists') {
-        console.log("user        : " + request.data.user);
+    if (request.action === 'user.getTopArtists') {
+        console.log("user        : " + request.params.user);
         lastfm.user.getTopArtists({
-            user    : request.data.user,
-            limit   : request.data.limit
+            user    : request.params.user,
+            limit   : request.params.limit
         }, {
             success : function(data) {
                 for (var i = 0; i < data.topartists.artist.length; i++) {

@@ -17,35 +17,22 @@ var svg;
 var width = 618;
 var height = 550;
 
-chrome_getTopArtists = function(data, callback) {
-    chrome.extension.sendMessage({
-        action: 'user.gettopartists',
-        data: data
-    },
-    callback
-            );
-};
-
 $(document).ready(function() {
-    build();
+    getTopArtists();
 });
 
-function build() {
-    $.Deferred(getTopArtists()).promise();
-}
-
 function getTopArtists() {
-    chrome_getTopArtists({
-        user: user,
-        limit: limit
+    
+    lastfm.api.chrome.user.getTopArtists({
+        user    : user,
+        limit   : limit
     },
     function(response1) {
         updateDat(response1, user);
-        chrome_getTopArtists(
-                {
-                    user: active_user,
-                    limit: limit
-                },
+        lastfm.api.chrome.user.getTopArtists({
+            user    : active_user,
+            limit   : limit
+        },
         function(response2, active_user) {
             updateDat(response2, active_user);
             setDIV();

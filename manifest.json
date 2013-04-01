@@ -27,6 +27,7 @@
             [
                 "js/lib/jquery/jquery-1.8.3.js",
                 "js/lib/d3/d3.v2.js",
+                "js/lib/lastfm/lastfm.api.chrome.js",
                 "js/main.js"
             ]
         }
