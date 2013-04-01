@@ -1,5 +1,5 @@
 {
-    "name"              : "SoundSuggest",
+    "name"              : "Last.fm Profile Visualizer",
     "version"           : "1.0",
     "manifest_version"  : 2,
     "description"       : "A simple Google Chrome extension using D3.js and Last.fm API.",
