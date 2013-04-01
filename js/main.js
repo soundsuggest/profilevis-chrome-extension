@@ -5,24 +5,22 @@
  */
 
 var user = document.location.toString().split("user/")[1];
-var active_user = $('#idBadgerUser').attr('href').split("user/")[1];
-var dataset = {};
-var matrix = [];
-var range = [];
-var range_artists = [];
-var N = 0;
-var limit = 20;
-var scaling_factor;
+var active_user         = $('#idBadgerUser').attr('href').split("user/")[1];
+var dataset             = {};
+var matrix              = [];
+var range               = [];
+var range_artists       = [];
+var N                   = 0;
+var limit               = 20;
+var artist_playcount    = {};
 var svg;
-var width = 618;
-var height = 550;
+var width               = 618;
+var height              = 550;
+var color_co_owned      = "#660066";
+var color_user          = "#CC0000";
+var color_active_user   = "#000099";
 
 $(document).ready(function() {
-    getTopArtists();
-});
-
-function getTopArtists() {
-    
     lastfm.api.chrome.user.getTopArtists({
         user    : user,
         limit   : limit
@@ -33,15 +31,13 @@ function getTopArtists() {
             user    : active_user,
             limit   : limit
         },
-        function(response2, active_user) {
+        function(response2) {
             updateDat(response2, active_user);
             setDIV();
-            setRange();
-            buildMatrix();
             buildVisualization();
         });
     });
-}
+});
 
 function setDIV() {
     $('<div id="soundsuggest">'
@@ -56,13 +52,16 @@ function setDIV() {
             + '</div>').insertBefore('#recentTracks');
 }
 
-function updateDat(response, usr) {
-    console.log('user : ' + usr);
-    for (var i = 0; i < response.data.topartists.artist.length; i++) {
-        console.log("response.topartists.artist[" + i + "] = " + response.data.topartists.artist[i].name);
-        if (dataset[response.data.topartists.artist[i].name] == null)
-            dataset[response.data.topartists.artist[i].name] = new Array();
-        dataset[response.data.topartists.artist[i].name].push(usr);
+function updateDat(data, usr) {
+    for (var i = 0; i < data.topartists.artist.length; i++) {
+        if (! dataset[data.topartists.artist[i].name])
+            dataset[data.topartists.artist[i].name] = new Array();
+        dataset[data.topartists.artist[i].name].push(usr);
+    }
+    for (var i = 0; i < data.topartists.artist.length; i++) {
+        if (! artist_playcount[data.topartists.artist[i].name])
+            artist_playcount[data.topartists.artist[i].name] = Number(0);
+        artist_playcount[data.topartists.artist[i].name] = Number(data.topartists.artist[i].playcount) + Number(artist_playcount[data.topartists.artist[i].name]);
     }
 }
 
@@ -72,19 +71,21 @@ function setRange() {
     }
 
     for (var key in dataset) {
-
-        var R = Math.floor((Math.random() * 8) + 1);
-        var G = Math.floor((Math.random() * 8) + 1);
-        var B = Math.floor((Math.random() * 8) + 1);
-
-        range.push('#' + R + '' + G + '' + B);
+        if (dataset[key].length == 2) {
+            range.push(color_co_owned);
+        } else if (dataset[key][0] == user) {
+            range.push(color_user);
+        } else if (dataset[key][0] == active_user) {
+            range.push(color_active_user);
+        } else {
+            console.error("Undefined user [" + dataset[key][0] + "] for artist [" + key + "].");
+        }
     }
 }
 
 function buildMatrix() {
 
     N = Object.keys(dataset).length;
-    scaling_factor = N / 2;
     matrix = new Array(N);
     for (var i = 0; i < N; i++) {
         matrix[i] = new Array(N);
@@ -97,9 +98,9 @@ function buildMatrix() {
             index2 = 0;
             for (var key2 in dataset) {
                 if ((dataset[key2].length == 2) && (key1 != key2)) {
-                    matrix[index1][index2] = scaling_factor;
+                    matrix[index1][index2] = Number(artist_playcount[key1]) + Number(artist_playcount[key2]);
                 } else if ((dataset[key2].length == 1) && (key1 != key2)) {
-                    matrix[index1][index2] = 1;
+                    matrix[index1][index2] = Number(artist_playcount[key1]) + Number(artist_playcount[key2]);
                 } else {
                     matrix[index1][index2] = 0;
                 }
@@ -109,7 +110,7 @@ function buildMatrix() {
             index2 = 0;
             for (var key2 in dataset) {
                 if ((dataset[key2].length == 1) && (key1 != key2) && (dataset[key1][0] == dataset[key2][0])) {
-                    matrix[index1][index2] = 1;
+                    matrix[index1][index2] = Number(artist_playcount[key1]) + Number(artist_playcount[key2]);
                 } else {
                     matrix[index1][index2] = 0;
                 }
@@ -126,17 +127,10 @@ function buildMatrix() {
     }
 }
 
-function showMatrix() {
-    for (var i = 0; i < N; i++) {
-        var out = '';
-        for (var j = 0; j < N; j++) {
-            out += matrix[i][j] + ' ';
-        }
-        console.log('[ ' + out + ']');
-    }
-}
-
 function buildVisualization() {
+    
+    setRange();
+    buildMatrix();
 
     svg = d3.select("#soundsuggest-chart")
             .append("svg")
@@ -154,7 +148,6 @@ function buildVisualization() {
             .domain(d3.range(range.length))
             .range(range);
 
-
     var innerRadius = Math.min(width - 220, height - 220) * .41;
     var outerRadius = innerRadius * 1.1;
 
@@ -163,17 +156,14 @@ function buildVisualization() {
             .data(chord.groups)
             .enter().append("path")
             .style("fill", function(d) {
-        return fill(d.index);
-    })
+                return fill(d.index);
+            })
             .style("stroke", function(d) {
-        return fill(d.index);
-    })
+                return fill(d.index);
+            })
             .attr("d", d3.svg.arc().innerRadius(innerRadius).outerRadius(outerRadius))
             .on("mouseover", fade(.1))
             .on("mouseout", fade(1));
-
-
-    // --------------- "TICKS"
 
     var ticks = svg.append("g").selectAll("g")
             .data(chord.groups)
@@ -205,8 +195,6 @@ function buildVisualization() {
                 return d.label;
             });
 
-
-    // ------------------------- COMPLETE DIAGRAM ------------------------------
     svg.append("g")
             .attr("class", "chord")
             .selectAll("path")
@@ -235,8 +223,8 @@ function fade(opacity) {
     return function(g, i) {
         svg.selectAll("g.chord path")
                 .filter(function(d) {
-            return d.source.index != i && d.target.index != i;
-        })
+                    return d.source.index != i && d.target.index != i;
+                })
                 .transition()
                 .style("opacity", opacity);
     };

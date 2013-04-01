@@ -24,18 +24,20 @@ chrome.tabs.onUpdated.addListener(checkForValidUrl);
  * The onMessage method is a part of chrome.extension
  * http://developer.chrome.com/extensions/extension.html
  */
-chrome.extension.onMessage.addListener(loadTopArtists);
+chrome.extension.onMessage.addListener(doAction);
 
 
 // GLOBAL VARIABLES AND CONSTANTS :
 // --------------------------------
 var api_key     = '828c109e6a54fffedad5177b194f7107';
 var api_secret  = '7c2f09e6eb84e8a6183c59e0bc574f70';
+var url         = 'https://ws.audioscrobbler.com/2.0/';
 var cache       = new LastFMCache();
 var lastfm      = new LastFM({
     apiKey    : api_key,
     apiSecret : api_secret,
-    cache     : cache
+    cache     : cache,
+    apiUrl    : url
 });
 
 // FUNCTIONS :
@@ -55,28 +57,24 @@ function checkForValidUrl(tabId, changeInfo, tab) {
 };
 
 /**
- * Loads the top artists for given users
- * @param {type} request
- * @param {type} sender
- * @param {type} sendResponse
- * @returns {undefined}
+ * Performs an action with given action name.
+ * @param {Object} request
+ * @param {Object} sender
+ * @param {function} sendResponse
+ * @returns {boolean}
  */
-function loadTopArtists(request, sender, sendResponse) {
+function doAction(request, sender, sendResponse) {
     if (request.action === 'user.getTopArtists') {
-        console.log("user        : " + request.params.user);
         lastfm.user.getTopArtists({
             user    : request.params.user,
             limit   : request.params.limit
         }, {
             success : function(data) {
-                for (var i = 0; i < data.topartists.artist.length; i++) {
-                    console.log("data.topartists.artist[" + i + "] = "
-                            + data.topartists.artist[i].name);
-                }
-                sendResponse({ data : data });
+                console.log("Successfully received last.fm data.");
+                sendResponse(data);
             },
             error   : function(error, msg) {
-                console.log(error + " : " + msg);
+                console.error(error + " : " + msg);
             }
         });
         return true;
